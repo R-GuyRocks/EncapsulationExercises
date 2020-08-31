@@ -1,0 +1,739 @@
+/* Polyfill service v3.25.1
+ * For detailed credits and licence information see https://github.com/financial-times/polyfill-service.
+ * 
+ * UA detected: chrome/84.0.0
+ * Features requested: all
+ * 
+ * - Array.prototype.contains, License: CC0 (required by "all")
+ * - Array.prototype.values, License: MIT (required by "all")
+ * - String.prototype.contains, License: CC0 (required by "all", "_ArrayIterator")
+ * - _Iterator, License: MIT (required by "all", "_ArrayIterator", "_StringIterator")
+ * - _ArrayIterator, License: MIT (required by "all", "Array.prototype.@@iterator", "Array.prototype.values")
+ * - _DOMTokenList, License: ISC (required by "all")
+ * - _StringIterator, License: MIT (required by "all")
+ * - _mutation, License: CC0 (required by "all")
+ * - setImmediate, License: CC0 (required by "all")
+ * 
+ * Using the `all` alias with polyfill.io is a very bad idea. In a future version of the service, `all` will deliver the same behaviour as `default`, so we recommend using `default` instead. */
+
+(function(undefined) {
+
+// Array.prototype.contains
+Object.defineProperty(Array.prototype, 'contains', {
+	value: Array.prototype.includes,
+	enumerable: false,
+	configurable: true,
+	writeable: true
+});
+
+// Array.prototype.values
+/* global Symbol */
+Object.defineProperty(Array.prototype, 'values', {
+	value: Array.prototype[Symbol.iterator],
+	enumerable: false,
+	writable: false
+});
+
+// String.prototype.contains
+String.prototype.contains = String.prototype.includes;
+
+// _Iterator
+// A modification of https://github.com/medikoo/es6-iterator
+// Copyright (C) 2013-2015 Mariusz Nowak (www.medikoo.com)
+
+var Iterator = (function () { // eslint-disable-line no-unused-vars
+	var clear = function () {
+		this.length = 0;
+		return this;
+	};
+	var callable = function (fn) {
+		if (typeof fn !== 'function') throw new TypeError(fn + " is not a function");
+		return fn;
+	};
+
+	var Iterator = function (list, context) {
+		if (!(this instanceof Iterator)) {
+			return new Iterator(list, context);
+		}
+		Object.defineProperties(this, {
+			__list__: {
+				writable: true,
+				value: list
+			},
+			__context__: {
+				writable: true,
+				value: context
+			},
+			__nextIndex__: {
+				writable: true,
+				value: 0
+			}
+		});
+		if (!context) return;
+		callable(context.on);
+		context.on('_add', this._onAdd.bind(this));
+		context.on('_delete', this._onDelete.bind(this));
+		context.on('_clear', this._onClear.bind(this));
+	};
+
+	Object.defineProperties(Iterator.prototype, Object.assign({
+		constructor: {
+			value: Iterator,
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_next: {
+			value: function () {
+				var i;
+				if (!this.__list__) return;
+				if (this.__redo__) {
+					i = this.__redo__.shift();
+					if (i !== undefined) return i;
+				}
+				if (this.__nextIndex__ < this.__list__.length) return this.__nextIndex__++;
+				this._unBind();
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		next: {
+			value: function () {
+				return this._createResult(this._next());
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_createResult: {
+			value: function (i) {
+				if (i === undefined) return {
+					done: true,
+					value: undefined
+				};
+				return {
+					done: false,
+					value: this._resolve(i)
+				};
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_resolve: {
+			value: function (i) {
+				return this.__list__[i];
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_unBind: {
+			value: function () {
+				this.__list__ = null;
+				delete this.__redo__;
+				if (!this.__context__) return;
+				this.__context__.off('_add', this._onAdd.bind(this));
+				this.__context__.off('_delete', this._onDelete.bind(this));
+				this.__context__.off('_clear', this._onClear.bind(this));
+				this.__context__ = null;
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		toString: {
+			value: function () {
+				return '[object Iterator]';
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		}
+	}, {
+		_onAdd: {
+			value: function (index) {
+				if (index >= this.__nextIndex__) return;
+				++this.__nextIndex__;
+				if (!this.__redo__) {
+					Object.defineProperty(this, '__redo__', {
+						value: [index],
+						configurable: true,
+						enumerable: false,
+						writable: false
+					});
+					return;
+				}
+				this.__redo__.forEach(function (redo, i) {
+					if (redo >= index) this.__redo__[i] = ++redo;
+				}, this);
+				this.__redo__.push(index);
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_onDelete: {
+			value: function (index) {
+				var i;
+				if (index >= this.__nextIndex__) return;
+				--this.__nextIndex__;
+				if (!this.__redo__) return;
+				i = this.__redo__.indexOf(index);
+				if (i !== -1) this.__redo__.splice(i, 1);
+				this.__redo__.forEach(function (redo, i) {
+					if (redo > index) this.__redo__[i] = --redo;
+				}, this);
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_onClear: {
+			value: function () {
+				if (this.__redo__) clear.call(this.__redo__);
+				this.__nextIndex__ = 0;
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		}
+	}));
+
+	Object.defineProperty(Iterator.prototype, Symbol.iterator, {
+		value: function () {
+			return this;
+		},
+		configurable: true,
+		enumerable: false,
+		writable: true
+	});
+	Object.defineProperty(Iterator.prototype, Symbol.toStringTag, {
+		value: 'Iterator',
+		configurable: false,
+		enumerable: false,
+		writable: true
+	});
+
+	return Iterator;
+}());
+
+// _ArrayIterator
+// A modification of https://github.com/medikoo/es6-iterator
+// Copyright (C) 2013-2015 Mariusz Nowak (www.medikoo.com)
+
+var ArrayIterator = (function() { // eslint-disable-line no-unused-vars
+
+	var ArrayIterator = function(arr, kind) {
+		if (!(this instanceof ArrayIterator)) return new ArrayIterator(arr, kind);
+		Iterator.call(this, arr);
+		if (!kind) kind = 'value';
+		else if (String.prototype.contains.call(kind, 'key+value')) kind = 'key+value';
+		else if (String.prototype.contains.call(kind, 'key')) kind = 'key';
+		else kind = 'value';
+		Object.defineProperty(this, '__kind__', {
+			value: kind,
+			configurable: false,
+			enumerable: false,
+			writable: false
+		});
+	};
+	if (Object.setPrototypeOf) Object.setPrototypeOf(ArrayIterator, Iterator.prototype);
+
+	ArrayIterator.prototype = Object.create(Iterator.prototype, {
+		constructor: {
+			value: ArrayIterator,
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_resolve: {
+			value: function(i) {
+				if (this.__kind__ === 'value') return this.__list__[i];
+				if (this.__kind__ === 'key+value') return [i, this.__list__[i]];
+				return i;
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		toString: {
+			value: function() {
+				return '[object Array Iterator]';
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		}
+	});
+
+	return ArrayIterator;
+}());
+
+// _DOMTokenList
+/*
+Copyright (c) 2016, John Gardner
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+var _DOMTokenList = (function() { // eslint-disable-line no-unused-vars
+	var dpSupport = true;
+	var defineGetter = function (object, name, fn, configurable) {
+		if (Object.defineProperty)
+			Object.defineProperty(object, name, {
+				configurable: false === dpSupport ? true : !!configurable,
+				get: fn
+			});
+
+		else object.__defineGetter__(name, fn);
+	};
+
+	/** Ensure the browser allows Object.defineProperty to be used on native JavaScript objects. */
+	try {
+		defineGetter({}, "support");
+	}
+	catch (e) {
+		dpSupport = false;
+	}
+
+
+	var _DOMTokenList = function (el, prop) {
+		var that = this;
+		var tokens = [];
+		var tokenMap = {};
+		var length = 0;
+		var maxLength = 0;
+		var addIndexGetter = function (i) {
+			defineGetter(that, i, function () {
+				preop();
+				return tokens[i];
+			}, false);
+
+		};
+		var reindex = function () {
+
+			/** Define getter functions for array-like access to the tokenList's contents. */
+			if (length >= maxLength)
+				for (; maxLength < length; ++maxLength) {
+					addIndexGetter(maxLength);
+				}
+		};
+
+		/** Helper function called at the start of each class method. Internal use only. */
+		var preop = function () {
+			var error;
+			var i;
+			var args = arguments;
+			var rSpace = /\s+/;
+
+			/** Validate the token/s passed to an instance method, if any. */
+			if (args.length)
+				for (i = 0; i < args.length; ++i)
+					if (rSpace.test(args[i])) {
+						error = new SyntaxError('String "' + args[i] + '" ' + "contains" + ' an invalid character');
+						error.code = 5;
+						error.name = "InvalidCharacterError";
+						throw error;
+					}
+
+
+			/** Split the new value apart by whitespace*/
+			if (typeof el[prop] === "object") {
+				tokens = ("" + el[prop].baseVal).replace(/^\s+|\s+$/g, "").split(rSpace);
+			} else {
+				tokens = ("" + el[prop]).replace(/^\s+|\s+$/g, "").split(rSpace);
+			}
+
+			/** Avoid treating blank strings as single-item token lists */
+			if ("" === tokens[0]) tokens = [];
+
+			/** Repopulate the internal token lists */
+			tokenMap = {};
+			for (i = 0; i < tokens.length; ++i)
+				tokenMap[tokens[i]] = true;
+			length = tokens.length;
+			reindex();
+		};
+
+		/** Populate our internal token list if the targeted attribute of the subject element isn't empty. */
+		preop();
+
+		/** Return the number of tokens in the underlying string. Read-only. */
+		defineGetter(that, "length", function () {
+			preop();
+			return length;
+		});
+
+		/** Override the default toString/toLocaleString methods to return a space-delimited list of tokens when typecast. */
+		that.toLocaleString =
+			that.toString = function () {
+				preop();
+				return tokens.join(" ");
+			};
+
+		that.item = function (idx) {
+			preop();
+			return tokens[idx];
+		};
+
+		that.contains = function (token) {
+			preop();
+			return !!tokenMap[token];
+		};
+
+		that.add = function () {
+			preop.apply(that, args = arguments);
+
+			for (var args, token, i = 0, l = args.length; i < l; ++i) {
+				token = args[i];
+				if (!tokenMap[token]) {
+					tokens.push(token);
+					tokenMap[token] = true;
+				}
+			}
+
+			/** Update the targeted attribute of the attached element if the token list's changed. */
+			if (length !== tokens.length) {
+				length = tokens.length >>> 0;
+				if (typeof el[prop] === "object") {
+					el[prop].baseVal = tokens.join(" ");
+				} else {
+					el[prop] = tokens.join(" ");
+				}
+				reindex();
+			}
+		};
+
+		that.remove = function () {
+			preop.apply(that, args = arguments);
+
+			/** Build a hash of token names to compare against when recollecting our token list. */
+			for (var args, ignore = {}, i = 0, t = []; i < args.length; ++i) {
+				ignore[args[i]] = true;
+				delete tokenMap[args[i]];
+			}
+
+			/** Run through our tokens list and reassign only those that aren't defined in the hash declared above. */
+			for (i = 0; i < tokens.length; ++i)
+				if (!ignore[tokens[i]]) t.push(tokens[i]);
+
+			tokens = t;
+			length = t.length >>> 0;
+
+			/** Update the targeted attribute of the attached element. */
+			if (typeof el[prop] === "object") {
+				el[prop].baseVal = tokens.join(" ");
+			} else {
+				el[prop] = tokens.join(" ");
+			}
+			reindex();
+		};
+
+		that.toggle = function (token, force) {
+			preop.apply(that, [token]);
+
+			/** Token state's being forced. */
+			if (undefined !== force) {
+				if (force) {
+					that.add(token);
+					return true;
+				} else {
+					that.remove(token);
+					return false;
+				}
+			}
+
+			/** Token already exists in tokenList. Remove it, and return FALSE. */
+			if (tokenMap[token]) {
+				that.remove(token);
+				return false;
+			}
+
+			/** Otherwise, add the token and return TRUE. */
+			that.add(token);
+			return true;
+		};
+
+		return that;
+	};
+
+	return _DOMTokenList;
+}());
+
+// _StringIterator
+// A modification of https://github.com/medikoo/es6-iterator
+// Copyright (C) 2013-2015 Mariusz Nowak (www.medikoo.com)
+
+/* global Iterator */
+
+var StringIterator = (function() { // eslint-disable-line no-unused-vars
+
+	var StringIterator = function (str) {
+		if (!(this instanceof StringIterator)) return new StringIterator(str);
+		str = String(str);
+		Iterator.call(this, str);
+		Object.defineProperty(this, '__length__', {
+			value: str.length,
+			configurable: false,
+			enumerable: false,
+			writable: false
+		});
+	};
+	if (Object.setPrototypeOf) Object.setPrototypeOf(StringIterator, Iterator);
+
+	StringIterator.prototype = Object.create(Iterator.prototype, {
+		constructor: {
+			value: StringIterator,
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_next: {
+			value: function() {
+				if (!this.__list__) return;
+				if (this.__nextIndex__ < this.__length__) return this.__nextIndex__++;
+				this._unBind();
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		_resolve: {
+			value: function (i) {
+				var char = this.__list__[i], code;
+				if (this.__nextIndex__ === this.__length__) return char;
+				code = char.charCodeAt(0);
+				if ((code >= 0xD800) && (code <= 0xDBFF)) return char + this.__list__[this.__nextIndex__++];
+				return char;
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		},
+		toString: {
+			value: function() {
+				return '[object String Iterator]';
+			},
+			configurable: true,
+			enumerable: false,
+			writable: true
+		}
+	});
+
+	return StringIterator;
+}());
+
+// _mutation
+var _mutation = (function () { // eslint-disable-line no-unused-vars
+
+	function isNode(object) {
+		// DOM, Level2
+		if (typeof Node === 'function') {
+			return object instanceof Node;
+		}
+		// Older browsers, check if it looks like a Node instance)
+		return object &&
+			typeof object === "object" && 
+			object.nodeName && 
+			object.nodeType >= 1 &&
+			object.nodeType <= 12;
+	}
+
+	// http://dom.spec.whatwg.org/#mutation-method-macro
+	return function mutation(nodes) {
+		if (nodes.length === 1) {
+			return isNode(nodes[0]) ? nodes[0] : document.createTextNode(nodes[0] + '');
+		}
+
+		var fragment = document.createDocumentFragment();
+		for (var i = 0; i < nodes.length; i++) {
+			fragment.appendChild(isNode(nodes[i]) ? nodes[i] : document.createTextNode(nodes[i] + ''));
+
+		}
+		return fragment;
+	};
+}());
+
+// setImmediate
+(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var setImmediate;
+
+    function addFromSetImmediateArguments(args) {
+        tasksByHandle[nextHandle] = partiallyApplied.apply(undefined, args);
+        return nextHandle++;
+    }
+
+    // This function accepts the same arguments as setImmediate, but
+    // returns a function that requires no arguments.
+    function partiallyApplied(handler) {
+        var args = [].slice.call(arguments, 1);
+        return function() {
+            if (typeof handler === "function") {
+                handler.apply(undefined, args);
+            } else {
+                (new Function("" + handler))();
+            }
+        };
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    task();
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function installNextTickImplementation() {
+        setImmediate = function() {
+            var handle = addFromSetImmediateArguments(arguments);
+            process.nextTick(partiallyApplied(runIfPresent, handle));
+            return handle;
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        setImmediate = function() {
+            var handle = addFromSetImmediateArguments(arguments);
+            global.postMessage(messagePrefix + handle, "*");
+            return handle;
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        setImmediate = function() {
+            var handle = addFromSetImmediateArguments(arguments);
+            channel.port2.postMessage(handle);
+            return handle;
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        setImmediate = function() {
+            var handle = addFromSetImmediateArguments(arguments);
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+            return handle;
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        setImmediate = function() {
+            var handle = addFromSetImmediateArguments(arguments);
+            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+            return handle;
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(this)); // eslint-disable-line no-undef
+})
+.call('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
+
+console.log('Using the `all` alias with polyfill.io is a very bad idea. In a future version of the service, `all` will deliver the same behaviour as `default`, so we recommend using `default` instead.');

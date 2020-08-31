@@ -1,0 +1,558 @@
+/* Metrodigi Custom CSS.
+
+** Version 3.4.5 updated 2/14/18 - John Connolly
+
+**  This release includes the addition of a new class (math_class) used for lists relating to math equations
+
+*/
+
+@import url("theme/redserif/default.css");
+@import url("theme/redserif/print.css");
+/* @import url("theme/default.css"); */
+/*
+------------------------------
+PXE CSS
+------------------------------
+
+To switch themes, comment out the current theme and uncomment or add another.
+
+*/
+
+/*# sourceMappingURL=main.css.map */
+
+/*** Audio START ***/
+a[data-type="audio"][data-state="loading"] *,
+a[data-type="audio"][data-state="playing"] * {
+  display: none;
+}
+a[data-type="audio"][data-state="loading"]::after {
+  content: 'Loading ...';
+}
+a[data-type="audio"][data-state="playing"]::after {
+  content: 'Close';
+}
+.player-container-wrapper {
+  clear: both;
+  padding-top: 23px;
+}
+.player-container {
+  height: 65px;
+  margin: 0;
+  opacity: 0.0;
+  overflow: hidden;
+  -webkit-transition: opacity 1.0s ease-in;
+  transition: opacity 1.0s ease-in;
+  width: 200px;
+}
+@media (max-width: 939px) {
+  .player-container {
+    width: 280px;
+  }
+}
+.player-container.show {
+  opacity: 1.0;
+}
+.player-container iframe {
+  margin: 0;
+}
+/*** Audio END ***/
+
+
+/*** Button START ***/
+aside.marginalia:not(.marginalia_1) {
+  margin: 1.6em 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+aside.marginalia > p {
+  font-family: "Palatino ET W02";
+  font-style: italic;
+  margin: 0;
+  
+}
+aside.marginalia > a {
+  font-family: "HelveticaNeueETW02";
+  display: inline-block;
+  padding: 3px 8px 3px 9px;
+  margin-bottom: 0;
+  font-size: 0.875em;
+  line-height: 1.4em;
+  text-align: center;
+  vertical-align: bottom;
+  cursor: pointer;
+  color: #333333;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  background-color: whitesmoke;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(100%, #e6e6e6));
+  background-image: -webkit-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -o-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF0F0F0', endColorstr='#FFE6E6E6', GradientType=0);
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #cccccc;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  float: left;
+  margin-right: 15px;
+  height: 28px;
+}
+aside.marginalia > a:hover {
+  background-color: #e6e6e6;
+  color: #333333;
+  text-decoration: none;
+  background-position: 0 -15px;
+  -webkit-transition-property: background-position;
+  -moz-transition-property: background-position;
+  -o-transition-property: background-position;
+  transition-property: background-position;
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+aside.marginalia > a:active {
+  background-image: none;
+  outline: 0;
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+aside.marginalia > a > p {
+  margin: 0;
+  display: inline-block;
+  line-height: 1.1;
+  text-indent: 0 !important;
+}
+aside.marginalia > a > p > span.design-icon:before {
+  font-family: 'FontAwesome';
+  font-size: 1.2em;
+  vertical-align: middle;
+  padding-right: 0.3em;
+  position: relative;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_4:before {
+  content: "\f028";
+  width: 18px;
+  display: inline-block;
+  text-align: left;
+  top: -1px;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_2:before {
+  content: "\f06e";
+  top: -1px;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_3:before {
+  content: "\f08e";
+}
+aside.marginalia > a > p > span.design-icon.design-icon_1:before {
+  content: "\f026";
+  width: 18px;
+  display: inline-block;
+  text-align: left;
+  top: -1px;
+}
+/*** Button END ***/
+
+
+/*** Modal START ***/
+.modal .modal-footer {
+  background-color: #f5f5f5;
+  padding: 18px 30px 18px;
+  border-top: 1px solid #ddd;
+  zoom: 1;
+  margin-bottom: 0;
+  -webkit-border-radius: 0 0 5px 5px;
+  -moz-border-radius: 0 0 5px 5px;
+  border-radius: 0 0 5px 5px;
+  -moz-box-shadow: 0 1px 0 white;
+  -webkit-box-shadow: 0 1px 0 white;
+  box-shadow: 0 1px 0 white;
+}
+.modal .modal-footer .btn.primary {
+  font-family: "HelveticaNeueETW01-55Rg";
+  display: inline-block;
+  padding: 3px 8px 3px 9px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 1.4em;
+  text-align: center;
+  vertical-align: bottom;
+  cursor: pointer;
+  color: #333333;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  background-color: whitesmoke;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(100%, #e6e6e6));
+  background-image: -webkit-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -o-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF0F0F0', endColorstr='#FFE6E6E6', GradientType=0);
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #cccccc;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: block;
+}
+.modal .modal-body p, .modal .modal-body div {
+  font-family: "Palatino ET W02";
+  font-size: 1em;
+  color: #070707;
+}
+a.mask {
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  position: fixed !important;
+}
+div.modal-body header h1 {
+  font-family: "HelveticaNeueETW02";
+  margin-bottom: 1.6em;
+  font-size: 1.25em;
+  font-weight: bold;
+}
+div.modal-body aside.ls_audio p {
+  font-family: "HelveticaNeueETW02";
+}
+aside.marginalia_1 > a:hover,
+aside.ls_audio > a:hover {
+  background-color: #e6e6e6;
+  color: #333333;
+  text-decoration: none;
+  background-position: 0 -15px;
+  -webkit-transition-property: background-position;
+  -moz-transition-property: background-position;
+  -o-transition-property: background-position;
+  transition-property: background-position;
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+aside.marginalia_1 > a:active,
+aside.ls_audio > a:active {
+  background-image: none;
+  outline: 0;
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.modal .modal-footer .btn.primary:hover {
+  background-color: #e6e6e6;
+  color: #333333;
+  text-decoration: none;
+  background-position: 0 -15px;
+  -webkit-transition-property: background-position;
+  -moz-transition-property: background-position;
+  -o-transition-property: background-position;
+  transition-property: background-position;
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+.modal .modal-footer .btn.primary:active {
+  background-image: none;
+  outline: 0;
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.modal-body {
+  position: relative; 
+  padding: 20px;
+  overflow: scroll;
+  min-height: 40px;
+  padding: 20px 20px 20px 20px;
+  word-wrap: break-word;
+}
+.modal {
+  display: none; 
+  overflow: auto; 
+  position: fixed;
+  top: 0;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  z-index: 2000;
+  min-width: 200px;
+  background-color: #ffffff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border: black solid 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  -webkit-background-clip: padding;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  font-family: "HelveticaNeueETW01-55Rg";
+}
+.marginalia a + p {
+  font-family: "Palatino ET W02";
+}
+div.modal p.subtitle {
+  font-family: "HelveticaNeueETW02";
+  font-weight: bold;
+}
+.modal .modal-body .caption p {
+  color: #565656;
+}
+.modal .modal-body .source p {
+  font-size: .9em;
+  color: #565656;
+}
+.modal .modal-body aside.marginalia p {
+  font-family: "HelveticaNeueETW02";
+}
+div.modal figure header p.subtitle {
+  font-family: "HelveticaNeueETW02", Helvetica, Arial, sans-serif;
+  color: #565656;
+  font-weight: 100;
+  margin-left: .75em;
+  margin-top: 0.2em;
+  font-size: 0.875em;
+  overflow: hidden;
+}
+div.modal .figure header h1.title, figure header h1.title {
+  margin-bottom: 0;
+}
+/*** Modal END ***/
+
+
+/*** Show/Hide START ***/
+aside {
+  margin-bottom: 1.6em;
+}
+aside.marginalia {
+  margin: 1.6em 0;
+}
+aside.marginalia > p {
+  font-family: "Palatino ET W02";
+  margin: 0;
+  font-style: italic;
+}
+aside.marginalia > p + a {
+  margin-top: 0.8em;
+}
+aside.marginalia > a,
+aside.marginalia > label.button {
+  font-family: "HelveticaNeueETW02";
+  display: inline-block;
+  padding: 3px 9px 3px 9px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 1.4em;
+  text-align: center;
+  vertical-align: bottom;
+  cursor: pointer;
+  color: #333333;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  background-color: whitesmoke;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(100%, #e6e6e6));
+  background-image: -webkit-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -moz-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: -o-linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-image: linear-gradient(top, #f0f0f0, #e6e6e6);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF0F0F0', endColorstr='#FFE6E6E6', GradientType=0);
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #cccccc;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  float: left;
+  margin-right: 15px;
+  height:auto;
+}
+aside.marginalia > label.button {
+  margin-top: 0.8em;
+}
+aside.marginalia > a:hover,
+aside.marginalia > label.button:hover {
+  background-color: #e6e6e6;
+  color: #333333;
+  text-decoration: none;
+  background-position: 0 -15px;
+  -webkit-transition-property: background-position;
+  -moz-transition-property: background-position;
+  -o-transition-property: background-position;
+  transition-property: background-position;
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+  -webkit-transition-timing-function: linear;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+aside.marginalia > a:active,
+aside.marginalia > label.button:active {
+  background-image: none;
+  outline: 0;
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+aside.marginalia > a > p,
+aside.marginalia > label.button > p {
+  margin: 2px 0 0 0 ;
+  display: inline-block;
+  line-height: 1.1;
+  font-weight: normal;
+  height: 20px;
+}
+label.button > p:after {
+  content: 'Learn More';
+}
+.show-hide-button-checkbox:checked ~ div + label.button > p:after {
+  content: 'Hide Text';
+}
+aside.marginalia > a > p > span.design-icon:before,
+aside.marginalia > label.button > p > span.design-icon:before {
+  font-family: 'FontAwesome';
+  font-size: 1.2em;
+  vertical-align: middle;
+  padding-right: 0.3em;
+  position: relative;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_4:before {
+  content: "\f028";
+  width: 18px;
+  display: inline-block;
+  text-align: left;
+  top: -1px;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_2:before,
+aside.marginalia > label.button > p > span.design-icon.design-icon_2:before {
+  content: "\f06e";
+  top: -2px;
+}
+aside.marginalia > a > p > span.design-icon.design-icon_3:before {
+  content: "\f08e";
+}
+aside.marginalia > a > p > span.design-icon.design-icon_1:before {
+  content: "\f026";
+  width: 18px;
+  display: inline-block;
+  text-align: left;
+  top: -1px;
+}
+.show-hide-button-checkbox {
+  display: none;
+}
+.show-hide-text {
+  max-height: 0;
+  clear: both;
+  overflow: hidden;
+  transition: 0.8s all;
+  -webkit-transition: 0.8s all;
+}
+.show-hide-text > p {
+  margin-left: 0;
+  margin-right: 0;
+}
+.show-hide-text > p:first-child,
+.show-hide-text > header + p {
+  margin-top: 0.8em;
+}
+.show-hide-button-checkbox:checked ~ div {
+  max-height: 9000px;
+}
+.aside-title {
+  font-family: "HelveticaNeueETW02";
+  display: inline-block;
+  padding-right: 0.6em;
+  margin-right: 0.6em;
+  border-right: 1px solid black;
+  font-style: normal;
+}
+.show-hide-text header {
+  margin-top: 2em !important;
+}
+.show-hide-text header h1.title {
+  background: transparent;
+  color: inherit;
+  display: inline;
+  font-size: 2em;
+  line-height: 1.88235em;
+  margin-top: 1em;
+  margin-bottom: 0em;
+  letter-spacing: 0;
+  line-height: normal;
+  padding: 0;
+  text-transform: none;
+  font-family: "HelveticaNeueETW02";
+}
+div.show-hide-text figure header h1.title {
+  font-family: "PMNCaeciliaETW01-Bold";
+  font-size: 1.5em;
+  margin-right: .5em;
+  margin-top: .2em !important;
+}
+div.show-hide-text figure.video header h1.title,
+div.show-hide-text figure.cl header h1.title,
+div.show-hide-text figure.figure header h1.title {
+  margin-top: .2em;
+}
+label.button.show-hide-button > span:after {
+  content: 'Learn More';
+}
+.show-hide-button-checkbox:checked ~ div + label.button > span:after {
+  content: 'Hide';
+}
+/*** Show/Hide END ***/@import url("theme/redserif/default.css");
+@import url("theme/redserif/print.css");
+/* @import url("theme/default.css"); */
+/*
+------------------------------
+PXE CSS
+------------------------------
+
+To switch themes, comment out the current theme and uncomment or add another.
+
+*/
+
+/*# sourceMappingURL=main.css.map */
